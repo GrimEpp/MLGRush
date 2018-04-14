@@ -28,6 +28,9 @@ queue = new Queue();
 
     private Queue queue;
 
+    public static boolean isInGame(Player p) {
+    }
+
     public void start() {
         if (queue.canTakeMore()) {
             if (!(Boolean)getConfig().get("settings.bypasslimit")) {

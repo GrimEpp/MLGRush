@@ -1,6 +1,7 @@
 package me.grimepp.system;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Objects;
@@ -18,6 +19,10 @@ public class Config {
 
     public <T> T get(String path) {
         return (T) yml.get(path);
+    }
+
+    public ConfigurationSection getSection(String path) {
+        return yml.getConfigurationSection(path);
     }
 
 
