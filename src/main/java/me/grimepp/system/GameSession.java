@@ -44,6 +44,13 @@ public class GameSession extends Default {
         blockManager.blocks.add(b);
     }
 
+    public Player getPlayer(Color blue) {
+        if (blue.equals(Color.BLUE))
+            return team1;
+        else
+            return team2;
+    }
+
     class GameData {
         int pointsRed;
         Player looser;

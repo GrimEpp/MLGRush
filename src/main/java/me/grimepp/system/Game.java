@@ -1,7 +1,7 @@
 package me.grimepp.system;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Bed;
 import org.bukkit.entity.Player;
@@ -42,9 +42,13 @@ queue = new Queue();
         return players.containsKey(p);
     }
 
+    public static Game getGame(Player player) {
+        return players.get(player);
+    }
+
     public void start() {
         if (queue.canTakeMore()) {
-            if (!(Boolean)getConfig().get("settings.bypasslimit")) {
+            if (!(boolean)getConfig().get("settings.bypasslimit")) {
                 return;
             }
         }
@@ -63,10 +67,11 @@ queue = new Queue();
         players.remove(looser);
         players.remove(winner);
         if (getConfig().get("settings.broadcastwin"))
-            Bukkit.broadcastMessage(getConfig().getMessage("messages.aftergame.broadcastmessage", new MapBuilder().add("%pointsblue%", String.valueOf(gameData.pointsBlue),
-            "%pointsred%", String.valueOf(gameData.pointsRed),
-            "%winnder%", gameData.winner.getName()
-            ,"%looser%", gameData.looser.getName()
+            Bukkit.broadcastMessage(getConfig().getMessage("messages.aftergame.broadcastmessage", new MapBuilder().add(
+                    "%pointsblue%", String.valueOf(gameData.pointsBlue),
+                    "%pointsred%", String.valueOf(gameData.pointsRed),
+                    "%winnder%", gameData.winner.getName(),
+                    "%looser%", gameData.looser.getName()
             ).getMap()));
         looser.sendMessage(getConfig().getMessage("messages.aftergame.loose",new MapBuilder()
                 .add(
@@ -84,6 +89,18 @@ queue = new Queue();
         .getMap()));
         ScoreBoardManager.reset(looser);
         ScoreBoardManager.reset(winner);
+    }
+
+    public GameSession getSession() {
+        return gameSession;
+    }
+
+    public Bed getBluebed() {
+        return bluebed;
+    }
+
+    public Bed getRedbed() {
+        return redbed;
     }
 }
  class Queue {
