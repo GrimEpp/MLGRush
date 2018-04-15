@@ -1,3 +1,5 @@
 settings:
     bypasslimit: false
     prefix: '[MLG]'
+    runder: 10 #Skriv -1 for uendelig runder.
+    broadcastwin: true

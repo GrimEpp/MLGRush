@@ -1,0 +1,5 @@
+messages:
+    aftergame:
+        broadcastmessage: '&a%winner% &8vant mot &a%looser%&8. [&b%pointsblue%&8-&b%pointsred%&8]'
+        win: '&8Du vant mot &a%opponent%&8! &a+1 win'
+        loose: '&8Du tapte mot &a%opponent%&8! &a+1 loss'

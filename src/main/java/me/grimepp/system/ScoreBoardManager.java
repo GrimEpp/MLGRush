@@ -22,6 +22,10 @@ public class ScoreBoardManager extends Default{
     private Scoreboard scoreboard;
     private Player p;
 
+    public static void reset(Player p) {
+
+    }
+
     public void enable(Player p ) {
         if (Game.isInGame(p)) {
 

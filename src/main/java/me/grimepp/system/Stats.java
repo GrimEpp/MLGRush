@@ -1,11 +1,13 @@
 package me.grimepp.system;
 
+import com.google.common.collect.ImmutableCollection;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Stats {
+public class  Stats extends Default {
     private static Map<UUID, Stats> statsMap;
     static {
         statsMap = new ConcurrentHashMap<>();
@@ -22,9 +24,10 @@ public class Stats {
         wins++;
     }
     public void loose() {
+
         losses++;
     }
-    public Stats getStats(UUID uuid) {
+    public static Stats getStats(UUID uuid) {
        if (statsMap.containsKey(uuid)) {
            return statsMap.get(uuid);
        } else {
