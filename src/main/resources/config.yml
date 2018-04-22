@@ -3,3 +3,6 @@ settings:
     prefix: '[MLG]'
     runder: 10 #Skriv -1 for uendelig runder.
     broadcastwin: true
+    titleperround: true
+    adminPermission: 'game.adminPermission'
+    wandname: '&aMarking wand'

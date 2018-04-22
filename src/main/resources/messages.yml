@@ -3,3 +3,45 @@ messages:
         broadcastmessage: '&a%winner% &8vant mot &a%looser%&8. [&b%pointsblue%&8-&b%pointsred%&8]'
         win: '&8Du vant mot &a%opponent%&8! &a+1 win'
         loose: '&8Du tapte mot &a%opponent%&8! &a+1 loss'
+titles:
+    round:
+        winner:
+            title: '&aDu vant!'
+            subtitle: '&aDu vant en runde mot %looser%! %pointsblue%-%pointsred%'
+        looser:
+            title: '&aDu tapte!'
+            subtitle: '&aDu tapte en runde mot %winner%! %pointsblue%-%pointsred%'
+    start:
+        title: '&aStarter runde!'
+        subtitle: '&aStarter en runde mot %opponent% om %time% sekunder!'
+commands:
+    game:
+        feilbruk: '&aFeil bruk! Skriv /game help for hjelp!'
+        joinetQueue: '&aDu er med i vente køen!'
+        forlotQueue: '&aDu gikk ut av vente køen!'
+        forlotspill: '&aDu forlot spillet!'
+        fikkwand: '&aDu fikk en claiming wand.'
+format:
+    game:
+        list:
+            startline: '&aListe av spill!'
+            repeat: '&2 %id% er %status%'
+            endline: '------------------'
+        help:
+            normal:
+                1: '-------------------------------------'
+                2: '/game list'
+                3: '/game join <id>'
+                4: '/game leave'
+                5: '/game help'
+                6: '-------------------------------------'
+            admin:
+                1: '-------------------------------------'
+                2: '/game list'
+                3: '/game join <id>'
+                4: '/game leave'
+                5: '/game help'
+                6: '/game creategame'
+                7: '/game wand'
+                8: '/game delete <id>'
+                9: '-------------------------------------'

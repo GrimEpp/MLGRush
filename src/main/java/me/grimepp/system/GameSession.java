@@ -1,5 +1,6 @@
 package me.grimepp.system;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,8 +30,54 @@ public class GameSession extends Default {
     public void win(Color color) {
         if (color == Color.BLUE) {
             points1++;
+            team1.sendTitle(getConfig().getColouredString("titles.round.winner.title", new MapBuilder().add(
+                    "%winner%", team1.getName(),
+                    "%looser%", team2.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()),getConfig().getColouredString("titles.round.winner.subtitle", new MapBuilder().add(
+                    "%winner%", team1.getName(),
+                    "%looser%", team2.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()), 10, 70, 10);
+
+            team2.sendTitle(getConfig().getColouredString("titles.round.looser.title", new MapBuilder().add(
+                    "%winner%", team1.getName(),
+                    "%looser%", team2.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()),getConfig().getColouredString("titles.round.looser.subtitle", new MapBuilder().add(
+                    "%winner%", team1.getName(),
+                    "%looser%", team2.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()), 10, 70, 10);
         } else {
             points2++;
+            team2.sendTitle(getConfig().getColouredString("titles.round.winner.title", new MapBuilder().add(
+                    "%winner%", team2.getName(),
+                    "%looser%", team1.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()),getConfig().getColouredString("titles.round.winner.subtitle", new MapBuilder().add(
+                    "%winner%", team2.getName(),
+                    "%looser%", team1.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()), 10, 70, 10);
+
+            team1.sendTitle(getConfig().getColouredString("titles.round.looser.title", new MapBuilder().add(
+                    "%winner%", team2.getName(),
+                    "%looser%", team1.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()),getConfig().getColouredString("titles.round.looser.subtitle", new MapBuilder().add(
+                    "%winner%", team2.getName(),
+                    "%looser%", team1.getName(),
+                    "%pointsred%", String.valueOf(points2),
+                    "%pointsblue%", String.valueOf(points1)
+            ).getMap()), 10, 70, 10);
         }
         if (points1 == (int) getConfig().get("settings.runder")) {
             game.win(new GameData(team1, team2, points1, points2));
@@ -51,13 +98,25 @@ public class GameSession extends Default {
             return team2;
     }
 
-    class GameData {
+    public Player getOpposite(Player player) {
+        return team1 == player ? team2 : team1;
+    }
+
+    public Color getColor(Player player) {
+        return player == team1 ? Color.BLUE : Color.RED;
+    }
+
+    public int getPoints(Color color) {
+        return color == Color.BLUE ? points1 : points2;
+    }
+
+    public static class GameData {
         int pointsRed;
         Player looser;
         Player winner;
         int pointsBlue;
 
-        GameData(Player team1, Player team2, int points1, int points2) {
+        public GameData(Player team1, Player team2, int points1, int points2) {
             winner = team1;
             looser = team2;
             pointsBlue = points1;

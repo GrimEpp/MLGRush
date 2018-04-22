@@ -1,10 +1,12 @@
 package me.grimepp.system;
 
+import me.grimepp.MLGRush;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Bed;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +18,8 @@ public class Game extends Default {
     static {
         players = new ConcurrentHashMap<>();
     }
+
+    private GameStatus status;
 
     public static Game createGame(Cube cube, Location spawnblue, Bed bedblue, Location spawnred, Bed bedred) {
         Game game = new Game(cube);
@@ -33,7 +37,7 @@ public class Game extends Default {
     private Bed redbed, bluebed;
     private Game(Cube cube) {
 this.cube = cube;
-queue = new Queue();
+queue = new Queue(this);
     }
 
     private Queue queue;
@@ -46,13 +50,49 @@ queue = new Queue();
         return players.get(player);
     }
 
+    public static Game getGame(int i) {
+        return gameMap.get(i);
+    }
+
+    public static Map<Integer, Game> getGames() {
+        return gameMap;
+    }
+
     public void start() {
         if (queue.canTakeMore()) {
             if (!(boolean)getConfig().get("settings.bypasslimit")) {
                 return;
             }
         }
+        status = GameStatus.INGAME;
         this.gameSession = new GameSession(this, queue.getPlayers());
+        Freeze.players.add(gameSession.getPlayer(Color.BLUE));
+        Freeze.players.add(gameSession.getPlayer(Color.RED));
+        new BukkitRunnable(){
+            int i = 5;
+            Player blue = gameSession.getPlayer(Color.BLUE);
+            Player red = gameSession.getPlayer(Color.RED);
+            @Override
+            public void run() {
+                i--;
+                blue.sendTitle(getConfig().getColouredString("titles.start.title", new MapBuilder().add(
+                        "%opponent%", red.getName(),
+                        "%time%", String.valueOf(i)
+                ).getMap()),getConfig().getColouredString("titles.start.subtitle", new MapBuilder().add(
+                        "%opponent%", red.getName(),
+                        "%time%", String.valueOf(i)
+                ).getMap()), 10, 70, 20);
+                if (i <= 0)
+                    cancel();
+            }
+
+            @Override
+            public synchronized void cancel() throws IllegalStateException {
+                Freeze.players.remove(blue);
+                Freeze.players.remove(red);
+                super.cancel();
+            }
+        }.runTaskTimer(MLGRush.getInstance(), 0L, 20L);
     }
 
     public Queue getQueue() {
@@ -89,6 +129,7 @@ queue = new Queue();
         .getMap()));
         ScoreBoardManager.reset(looser);
         ScoreBoardManager.reset(winner);
+        status = GameStatus.WAITING;
     }
 
     public GameSession getSession() {
@@ -102,36 +143,12 @@ queue = new Queue();
     public Bed getRedbed() {
         return redbed;
     }
-}
- class Queue {
-    private List<Player> players;
-    private static List<Player> waiting;
-    static {
-        waiting = new ArrayList<>();
-    }
-     Queue() {
-        players = new ArrayList<>();
+
+    public Cube getCube() {
+        return cube;
     }
 
-    public void addPlayer(Player p) {
-        players.add(p);
-        waiting.add(p);
-    }
-
-    public boolean canTakeMore() {
-        return players.size() != 2;
-    }
-
-    public void removePlayer(Player p) {
-        players.remove(p);
-        waiting.remove(p);
-    }
-
-    public static boolean isWaiting(Player p) {
-        return waiting.contains(p);
-    }
-
-    public List<Player> getPlayers() {
-        return players;
+    public GameStatus getStatus() {
+        return this.status;
     }
 }
