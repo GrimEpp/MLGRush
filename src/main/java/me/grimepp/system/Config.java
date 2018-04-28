@@ -42,10 +42,10 @@ public class Config {
         return ChatColor.translateAlternateColorCodes('&', yml.getString(path));
     }
     public String getMessage(String path) {
-        return getColouredConfigString(("settings.prefix") + " " + getColouredString(path));
+        return getColouredConfigString("settings.prefix") + " " + getColouredString(path);
     }
     public String getMessage(String path, Map<String, String> place) {
-        return replaceM(place, getColouredString("settings.prefix") + " " + getColouredString(path));
+        return replaceM(place, getColouredConfigString("settings.prefix") + " " + getColouredString(path));
     }
 
     private String replaceM(Map<String, String> placeholder, String text) {
@@ -56,10 +56,14 @@ public class Config {
     }
 
     public String getColouredString(String s, Map<String,String> map) {
-        return ChatColor.translateAlternateColorCodes('&', replaceM(map, s));
+        return ChatColor.translateAlternateColorCodes('&', replaceM(map, yml1.getString(s)));
     }
 
     public ConfigurationSection getFormat(String path) {
         return yml1.getConfigurationSection(path);
+    }
+
+    public String getColouredConfigString(String s, Map<String,String> map) {
+        return ChatColor.translateAlternateColorCodes('&', replaceM(map, yml.getString(s)));
     }
 }

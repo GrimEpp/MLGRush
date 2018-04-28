@@ -27,6 +27,9 @@ public class Queue {
     public void addPlayer(Player p) {
         players.add(p);
         waiting.put(p, this);
+        if (players.size() >= 2) {
+            game.start();
+        }
     }
 
     public boolean canTakeMore() {
@@ -48,5 +51,10 @@ public class Queue {
 
     private Game getGame() {
         return game;
+    }
+
+    public void empty() {
+        players.forEach(waiting::remove);
+        players.clear();
     }
 }

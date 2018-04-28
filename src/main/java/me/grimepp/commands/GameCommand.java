@@ -3,15 +3,10 @@ package me.grimepp.commands;
 import me.grimepp.system.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.block.Skull;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 public class GameCommand extends Default implements CommandExecutor {
     @Override
@@ -27,7 +22,7 @@ public class GameCommand extends Default implements CommandExecutor {
                 return true;
             }
             String game = args[1];
-            if (!isInt(game)) {
+            if (isNotInt(game)) {
                 commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
                 return true;
             }
@@ -38,6 +33,10 @@ public class GameCommand extends Default implements CommandExecutor {
             }
         if (!(commandSender instanceof Player)) {
                 commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            if (Queue.isWaiting((Player) commandSender)) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.erAlleredeIEnVenteKOO"));
                 return true;
             }
             game1.getQueue().addPlayer(((Player) commandSender));
@@ -60,35 +59,25 @@ public class GameCommand extends Default implements CommandExecutor {
                 return true;
             } else if (Queue.isWaiting(player)) {
                 Queue.clear(player);
-                player.sendMessage(getConfig().getMessage("command.game.forlotQueue"));
+                player.sendMessage(getConfig().getMessage("commands.game.forlotQueue"));
             }else {
                 commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
                 return true;
             }
         } else if (args[0].equalsIgnoreCase("list")) {
-            String startline = getConfig().getColouredString("format.game.list.startline", new MapBuilder().add(
-                    "%nl%", System.lineSeparator()
-            ).getMap());
-            String endline = getConfig().getColouredString("format.game.endline", new MapBuilder().add(
-                    "%nl%", System.lineSeparator()
-            ).getMap());
-            commandSender.sendMessage(startline);
-               Game.getGames().forEach((integer, game) -> commandSender.sendMessage(getConfig().getColouredString("format.game.list.repeat", new MapBuilder().add(
-                       "%id%", integer.toString(),
-                       "%status%", game.getStatus().name()
-               ).getMap())));
-           commandSender.sendMessage(endline);
-            /*String repeat = getConfig().getColouredString("format.game.list.repeat", new MapBuilder().add(
-                    "%id%", String.valueOf(id),
-                    "%status%", status.name()
-            ).getMap());*/
+            commandSender.sendMessage(getConfig().getColouredString("format.game.list.startline"));
+            Game.getGames().forEach((integer, game) -> commandSender.sendMessage(getConfig().getColouredString("format.game.list.repeat", new MapBuilder().add(
+                    "%id%", integer.toString(),
+                    "%status%", game.getStatus().name()
+            ).getMap())));
+            commandSender.sendMessage(getConfig().getColouredString("format.game.list.endline"));
         } else if (args[0].equalsIgnoreCase("help")) {
-        if (commandSender.hasPermission(String.valueOf(getConfig().get("settings.adminPermission")))) {
-            getConfig().getFormat("format.game.help.admin").getKeys(true).forEach(sff->commandSender.sendMessage(getConfig().getColouredString(sff)));
+        if (commandSender.hasPermission((String) getConfig().get("settings.adminPermission"))) {
+            getConfig().getFormat("format.game.help.admin").getKeys(false).forEach(sff->commandSender.sendMessage(getConfig().getColouredString("format.game.help.admin."+sff)));
         } else {
-            getConfig().getFormat("format.game.help.normal").getKeys(true).forEach(sff -> commandSender.sendMessage(getConfig().getColouredString(sff)));
+            getConfig().getFormat("format.game.help.normal").getKeys(false).forEach(sff->commandSender.sendMessage(getConfig().getColouredString("format.game.help.normal."+sff)));
         }
-        } else if (!commandSender.hasPermission(String.valueOf(getConfig().get("settings.adminPermission")))) {
+        } else if (!commandSender.hasPermission((String) getConfig().get("settings.adminPermission"))) {
             commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
             return true;
         } else if (args[0].equalsIgnoreCase("wand")) {
@@ -99,19 +88,74 @@ public class GameCommand extends Default implements CommandExecutor {
             Player player = ((Player) commandSender);
             if (player.getInventory().firstEmpty() == -1)
                 return true;
-
+            player.getInventory().addItem(Wand.getWand());
+        } else if (args[0].equalsIgnoreCase("creategame")) {
+            if (!(commandSender instanceof Player)) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            Player p = (Player) commandSender;
+            Wand wand = Wand.get(p);
+            if (!wand.isValid()) {
+                p.sendMessage(getConfig().getMessage("commands.game.ikkeSattPoints"));
+                return true;
+            }
+            Game game = Game.createGame(new Cube(wand.getL1(), wand.getL2()), wand.getSpawn1(), wand.getBed1(), wand.getSpawn2(), wand.getBed2());
+            p.sendMessage(getConfig().getMessage("commands.game.lagdespill", new MapBuilder().add(
+                    "%id%", String.valueOf(game.getId())
+            ).getMap()));
+        } else if (args[0].equalsIgnoreCase("spawn") && args.length > 1) {
+            if (isNotInt(args[1])) {
+                 commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            int i = Integer.parseInt(args[1]);
+            if (i != 1 && i != 2) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            if (!(commandSender instanceof Player)) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            Player p = (Player) commandSender;
+            Wand wand = Wand.get(p);
+            if (i == 1) {
+                wand.setSpawn1(p.getLocation());
+                p.sendMessage(getConfig().getMessage("commands.game.sattspawn1"));
+                return true;
+            } else {
+                wand.setSpawn2(p.getLocation());
+                p.sendMessage(getConfig().getMessage("commands.game.sattspawn2"));
+                return true;
+            }
+        } else if (args[0].equalsIgnoreCase("delete")) {
+            if (isNotInt(args[1])) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+                return true;
+            }
+            int i = Integer.parseInt(args[1]);
+            if (Game.getGame(i) == null) {
+                commandSender.sendMessage(getConfig().getMessage("commands.game.ingenspillmedid", new MapBuilder().add(
+                        "%id%", String.valueOf(i)
+                ).getMap()));
+                return true;
+            }
+            Game.deleteGame(i);
+        } else {
+            commandSender.sendMessage(getConfig().getMessage("commands.game.feilbruk"));
+            return true;
         }
-
         return true;
     }
 
-    private static boolean isInt(String text) {
+    private static boolean isNotInt(String text) {
         try {
             Integer.parseInt(text);
-            return true;
+            return false;
 
         } catch (NumberFormatException e) {
-            return false;
+            return true;
         }
     }
 }

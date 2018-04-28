@@ -17,15 +17,18 @@ public class  Stats extends Default {
 
     private int wins, losses;
     private Stats(UUID uuid) {
-        this.uuid = uuid;
         statsMap.put(uuid,this);
+        wins = 0;
+        losses = 0;
+        this.uuid = uuid;
     }
     public void win() {
         wins++;
+        AutoSaver.saveStats(uuid);
     }
     public void loose() {
-
         losses++;
+        AutoSaver.saveStats(uuid);
     }
     public static Stats getStats(UUID uuid) {
        if (statsMap.containsKey(uuid)) {
@@ -33,6 +36,14 @@ public class  Stats extends Default {
        } else {
            return new Stats(uuid);
        }
+    }
+
+    public void setLosses(int losses) {
+        this.losses = losses;
+    }
+
+    public void setWins(int wins) {
+        this.wins = wins;
     }
 
     public int getLosses() {

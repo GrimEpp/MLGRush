@@ -85,6 +85,8 @@ public class GameSession extends Default {
             game.win(new GameData(team2, team1, points2, points1));
         }
         blockManager.blocks.forEach(b->b.setType(Material.AIR));
+        team1.teleport(game.getSpawnBlue());
+        team2.teleport(game.getSpawnRed());
     }
 
     public void addBlock(Block b) {
