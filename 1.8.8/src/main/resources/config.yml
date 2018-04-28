@@ -1,0 +1,31 @@
+settings:
+    bypasslimit: false
+    prefix: '[MLG]'
+    runder: 10 #Skriv -1 for uendelig runder.
+    broadcastwin: true
+    titleperround: true
+    adminPermission: 'game.adminPermission'
+    wandname: '&aMarking wand'
+    scoreboard:
+        normal:
+            enabled: true
+            lines:
+                0: '-------------------'
+                1: 'NAVNET DITT: %player_name%'
+                2: 'Dine shit: '
+                3: '-------------------'
+        game:
+            enabled: true
+            lines:
+                0: '-------------------'
+                1: 'NAVNET DITT: %player_name%'
+                2: 'Motstander: %game_opponent%'
+                3: 'Dine poeng: %game_points_own%'
+                4: 'Motstander poeng: %game_points_opponent%'
+                5: 'Dine shit: '
+                6: '-------------------' 
+    stats:
+        0: '--------------'
+        1: 'wins: %wins%'
+        2: 'losses: %losses%'
+        3: '--------------'
