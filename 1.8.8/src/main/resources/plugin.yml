@@ -1,6 +1,0 @@
-name: Rush
-version: 1
-main: me.grimepp.MLGRush
-commands:
-  game:
-  stats:
